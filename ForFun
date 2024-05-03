@@ -1,12 +1,11 @@
-import java.util.Scanner;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Scanner;
 
 public class App {
     static String connStr = "";
-    Scanner scan;
 
     public static void main(String[] args) throws Exception {
         initializeConnectionString();
@@ -35,17 +34,31 @@ public class App {
     private static void query1() {
 
         try {
+            Scanner scan = new Scanner(System.in);
 
+            System.out.println("What's your name: ");
+            String name = scan.nextLine();
+            System.out.println("What's your penis size, only use whole numbers : ");
+            double size = scan.nextDouble();
+            System.out.println("What's the unit of measurement: ");
+            String unit = scan.nextLine();
+            if (unit.length() > 2) {
+                System.out.println("Abbreviate it, if in Square Miles, just use \"mi\", I'll know Trevan.");
+                System.out.println("Now try again: ");
+                unit = scan.nextLine();
+            }
             Connection c = DriverManager.getConnection(connStr);
             Statement stmt = c.createStatement(); // create a SQL statement
-            ResultSet rs = stmt.executeQuery("SELECT * FROM emoney_companies;");
+            ResultSet rs = stmt.executeQuery(
+                    String.format("INSERT INTO emoney_companies VALUES ('%s', %f, %d);", name, size, unit));
 
-            while (rs.next()) { // iterate over the query results
-                String name = rs.getString("name");
+            // while (rs.next()) { // iterate over the query results
+            // String name = rs.getString("name");
 
-                System.out.println(name);
-            }
+            // System.out.println(name);
+            // }
             c.close();
+            scan.close();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
