@@ -1,0 +1,53 @@
+import java.util.Scanner;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+public class App {
+    static String connStr = "";
+    Scanner scan;
+
+    public static void main(String[] args) throws Exception {
+        initializeConnectionString();
+        query1();
+    }
+
+    private static void initializeConnectionString() {
+        String host = "computerscience-14437.5xj.gcp-us-central1.cockroachlabs.cloud";
+        String port = "26257";
+        String dbName = "defaultdb";
+        String username = "preston";
+        String password = "0Arp3QjuYH1RqF5qM_qd6w";
+
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            System.out.printf("Couldn't find driver. Put postgresql-42.7.3.jar in /lib folder");
+        } // dynamically load JDBC driver
+
+        // jdbc:postgresql://{host}:{port}/{database}?password={password}&sslmode=verify-full&user={username}
+
+        connStr = String.format("jdbc:postgresql://%s:%s/%s?password=%s&sslmode=prefer&user=%s", host, port,
+                dbName, password, username);
+    }
+
+    private static void query1() {
+
+        try {
+
+            Connection c = DriverManager.getConnection(connStr);
+            Statement stmt = c.createStatement(); // create a SQL statement
+            ResultSet rs = stmt.executeQuery("SELECT * FROM emoney_companies;");
+
+            while (rs.next()) { // iterate over the query results
+                String name = rs.getString("name");
+
+                System.out.println(name);
+            }
+            c.close();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
